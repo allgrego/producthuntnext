@@ -39,6 +39,7 @@ const Buscar = () => {
             <InputText 
                 type="text" 
                 placeholder="Buscar Productos"
+                name="search"
             />
             <InputSubmit type="submit">Buscar</InputSubmit>
         </form>

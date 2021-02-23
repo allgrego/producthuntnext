@@ -1,20 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
+import Router from 'next/router';
 import Layout from '../components/layout/Layout';
 import {css} from '@emotion/react';
 import {Form, Field, InputSubmit, Error} from '../components/ui/Form';
+import firebase from '../firebase'
 
 // Validations
 import useValidation from '../hooks/useValidation';
 import validateCreateAccount from '../validation/validateCreateAccount';
 
+// State inicial de form
+const initial_state = {
+    name: '',
+    email: '',
+    password: ''
+};
 
 const Signup = () => {
-
-    const initial_state = {
-        name: '',
-        email: '',
-        password: ''
-    };
+    // Hook for creation error
+    const [error, setError] = useState('');
 
     // Custom Hook for Validation with destructuring
     const {values, errors, handleSubmit, handleChange, handleBlur} = useValidation(
@@ -23,8 +27,14 @@ const Signup = () => {
     // Destructuring of values
     const {name, email, password} = values;
 
-    function createAccount(){
-        console.log('Creando Cuenta...');
+    async function createAccount(){
+        try {
+            await firebase.createUser(name,email,password);   
+            Router.push('/');
+        } catch (error) {
+            console.error('Hubo un error al crear el usuario ', error.message);
+            setError(error.message);
+        }
     }
 
     return ( 
@@ -94,6 +104,9 @@ const Signup = () => {
 
                         {/* Password Error */}
                         {errors.password && <Error>{errors.password}</Error>}
+
+                        {/* General Error */}
+                        {error && <Error>{error}</Error>}
 
                         <InputSubmit
                             type="submit"

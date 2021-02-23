@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import Router from 'next/router';
 import Link from 'next/link';
 import styled from '@emotion/styled';
 import {css} from '@emotion/react';
+import {FirebaseContext} from '../../firebase';
 import Buscar from '../ui/Buscar';
 import Nav from './Nav';
 import Boton from '../ui/Boton';
@@ -28,7 +30,7 @@ const Logo = styled.p`
 
 const Header = () => {
 
-    const thereIsUser = false;
+    const{user, firebase} =  useContext(FirebaseContext);
 
     return ( 
         <header
@@ -57,15 +59,19 @@ const Header = () => {
                         align-items: center;
                     `}
                 >
-                    {thereIsUser?(
+                    {user?(
                         <>
                             <p
                             css={css`
                                 margin-right: 2rem;
                             `}
-                            >Hola, Juan</p>
+                            >{user.displayName}</p>
                             <Boton
                                 bgColor="true"
+                                onClick={()=>{
+                                    firebase.logout();
+                                    Router.push('/login');
+                                }}
                             >
                                 Cerrar Sesión
                             </Boton>
